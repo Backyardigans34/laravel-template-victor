@@ -1,64 +1,107 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Biblioteca MVC e CRUD
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Template para praticar a arquitetura MVC do Laravel implementando o cadastro de livros. As rotas e as Views ja estao prontas; a tarefa da turma e criar Model, Migration e Controller e conectar as camadas.
 
-## About Laravel
+## Inicializacao
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. Clone o repositorio e entre na pasta do projeto.
+2. Instale as dependencias:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+   ```bash
+   composer install
+   ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+3. Crie o arquivo de ambiente e gere a chave da aplicacao:
 
-## Learning Laravel
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+4. Configure no `.env` a conexao com o banco de dados. Para MySQL, informe ao menos `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD`.
+5. Inicie o servidor:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   ```bash
+   php artisan serve
+   ```
 
-## Laravel Sponsors
+6. Acesse `http://127.0.0.1:8000`. Antes da implementacao do Controller, a pagina apresentara um erro esperado: a classe `LivroController` ainda nao existe.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Atividade: implementar o CRUD
 
-### Premium Partners
+### 1. Criar o Model
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+```bash
+php artisan make:model Livro
+```
 
-## Contributing
+Em `app/Models/Livro.php`, configure os campos liberados para atribuicao em massa com `$fillable`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```php
+protected $fillable = ['titulo', 'autor', 'ano_publicacao', 'isbn'];
+```
 
-## Code of Conduct
+### 2. Criar a Migration
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan make:migration create_livros_table --create=livros
+```
 
-## Security Vulnerabilities
+Na migration, crie a tabela `livros` com os campos abaixo:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Campo | Tipo sugerido | Regra |
+| --- | --- | --- |
+| `id` | id | chave primaria |
+| `titulo` | string | obrigatorio |
+| `autor` | string | obrigatorio |
+| `ano_publicacao` | unsignedSmallInteger | obrigatorio |
+| `isbn` | string | opcional |
+| `created_at` e `updated_at` | timestamps | padrao do Laravel |
 
-## License
+Depois execute:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan migrate
+```
+
+### 3. Criar o Controller
+
+```bash
+php artisan make:controller LivroController --resource
+```
+
+Implemente os metodos do resource controller usando `App\Models\Livro`:
+
+| Metodo | Responsabilidade |
+| --- | --- |
+| `index` | buscar os livros e retornar `livros.index` com a variavel `$livros` |
+| `create` | retornar `livros.create` |
+| `store` | validar, cadastrar e redirecionar para a listagem |
+| `edit` | receber o `Livro` e retornar `livros.edit` com `$livro` |
+| `update` | validar, atualizar e redirecionar para a listagem |
+| `destroy` | excluir o livro e redirecionar para a listagem |
+
+Sugestao de validacao:
+
+```php
+[
+    'titulo' => ['required', 'string', 'max:255'],
+    'autor' => ['required', 'string', 'max:255'],
+    'ano_publicacao' => ['required', 'integer', 'min:1000', 'max:' . now()->year],
+    'isbn' => ['nullable', 'string', 'max:20'],
+]
+```
+
+## Rotas e Views fornecidas
+
+A rota `Route::resource('livros', LivroController::class)` ja esta em `routes/web.php`. Ela cria as rotas de listagem, criacao, edicao, atualizacao e exclusao.
+
+As Views estao organizadas para evidenciar a camada View:
+
+- `resources/views/layouts/app.blade.php`: layout principal.
+- `resources/views/partials/header.blade.php` e `footer.blade.php`: templates reutilizaveis.
+- `resources/views/livros/index.blade.php`: listagem, botoes de edicao e exclusao.
+- `resources/views/livros/create.blade.php` e `edit.blade.php`: telas de formulario.
+- `resources/views/livros/_form.blade.php`: campos compartilhados pelos dois formularios.
+
+O botao Excluir envia um formulario com os verbos `POST` e `DELETE`, incluindo a protecao CSRF do Laravel.
