@@ -1,6 +1,15 @@
+<div align="center" style="text-align: center;">
+
 # Biblioteca MVC e CRUD
 
+![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-9.x-FF2D20?logo=laravel&logoColor=white)
+![LTP](https://img.shields.io/badge/LTP-3-4B556)
+![Template](https://img.shields.io/badge/Template%20para%20pr%C3%A1tica-0EA5E9)
+
 Template para praticar a arquitetura MVC do Laravel implementando o cadastro de livros. As rotas e as Views ja estao prontas; a tarefa da turma e criar Model, Migration e Controller e conectar as camadas.
+
+</div>
 
 ## Inicializacao
 
