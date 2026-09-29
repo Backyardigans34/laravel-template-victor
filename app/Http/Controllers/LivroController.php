@@ -25,7 +25,7 @@ class LivroController extends Controller
      */
     public function create()
     {
-        //
+        return view('livros.create');
     }
 
     /**
@@ -36,7 +36,15 @@ class LivroController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $livro = $request ->validate([
+    'titulo' => ['required', 'string', 'max:255'],
+    'autor' => ['required', 'string', 'max:255'],
+    'ano_publicacao' => ['required', 'integer', 'min:1000', 'max:' . now()->year],
+    'isbn' => ['nullable', 'string', 'max:20'],
+]);
+
+    livro:: create($livro);
+    return redirect () ->route('livros.index');
     }
 
     /**
@@ -58,7 +66,8 @@ class LivroController extends Controller
      */
     public function edit($id)
     {
-        //
+        $livro = livro:: find($id);
+        return view("livros.edit", ["livro" =>$livro]);
     }
 
     /**
@@ -70,7 +79,17 @@ class LivroController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+          {
+        $livroDados = $request ->validate([
+    'titulo' => ['required', 'string', 'max:255'],
+    'autor' => ['required', 'string', 'max:255'],
+    'ano_publicacao' => ['required', 'integer', 'min:1000', 'max:' . now()->year],
+    'isbn' => ['nullable', 'string', 'max:20'],
+]);
+    $livro = livro::find($id);
+    $livro -> update($livroDados);
+    return redirect () ->route('livros.index');
+    }
     }
 
     /**
@@ -81,6 +100,7 @@ class LivroController extends Controller
      */
     public function destroy($id)
     {
-        //
+        livro:: destroy($id);
+        return redirect () ->route('livros.index');
     }
 }
